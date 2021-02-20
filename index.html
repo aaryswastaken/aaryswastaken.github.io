@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<!-- saved from url=(0065)file:///C:/Users/vince/Documents/CofeDrink68.github.io/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Countdown</title>
+    <style>
+        #container {
+            text-align: center;
+            margin-top: auto;
+            position: absolute;
+            top: 25%;
+            width: 99%;
+        }
+    </style>
+</head>
+<body>
+    <div style="" id="container">
+        <p id="full" style="font-size: 4em">0 jours 21 heures 55 minutes 14 secondes</p>
+        <p id="seconds" style="font-size: 2em; font-weight: bold;">Soit 75314.920 secondes</p>
+    </div>
+    <script>
+        const target = Date.parse("21 Feb 2021 10:00:00 GMT+01")
+        function refresh() {
+            let now = Date.now()
+            let diff = new Date(target-now);
+            console.log(diff);
+            let full = (parseInt((diff.getTime()/(3600*24*1000)).toString().split(".")[0]))+" jours "+diff.getHours()+" heures "+diff.getMinutes()+" minutes "+diff.getSeconds()+" secondes";
+            console.log(full);
+            document.getElementById("full").innerText = full;
+            let seconds = (diff.getTime()/1000);
+            console.log(diff.getTime());
+            document.getElementById("seconds").innerText = "Soit "+seconds+(seconds.toString().includes(".") ? "0".repeat(3-(seconds.toString().split(".")[1].length)) : "000")+" secondes";
+            setTimeout(refresh,1000/50);
+        }
+
+        refresh();
+    </script>
+
+
+</body></html>
