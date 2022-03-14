@@ -1,0 +1,122 @@
+{
+  "categories": [
+    {"0": "Entrées"},
+    {"1": "Pizzas", "supp": "Supplément par garniture 1.00€"},
+    {"2": "Pidés"},
+    {"3": "Sandwiches", "supp": "Sauce au choix : Sauce blanche, ketchup, mayonnaise, algérienne, samurai, harissa, moutarde", "options": ["Seul", "Avec frites"]},
+    {"4": "Mixés"},
+    {"5": "Box"},
+    {"6": "Assiettes"},
+    {"7": "Portions"},
+    {"8": "Desserts"},
+    {"9": "Boissons Fraîches"},
+    {"10": "Boissons Chaudes"},
+    {"11": "Apéritifs"},
+    {"12": "Bières"},
+    {"13": "Digestifs"},
+    {"14": "Vins"}
+  ],
+  "options": [
+    {"id": "0", "category": "0","name": "Tzatziki", "ingredients": "Concombre, yaourt, ail, aneth, menthe", "price": 5.00},
+    {"id": "1", "category": "0","name": "Purée d'aubergines", "ingredients": "Aubergine, yaourt, ail", "price": 5.00},
+    {"id": "2", "category": "0","name": "Bergère", "ingredients": "Salade verte, tomate, oignons, concombre fromage", "price": 5.00},
+    {"id": "3", "category": "0","name": "Thon", "ingredients": "Salade verte, tomate, oignons, thon, mais", "price": 6.00},
+    {"id": "4", "category": "0","name": "Poulet", "ingredients": "Salade verte, tomate, poulet, oignons, concombre", "price": 6.50},
+    {"id": "5", "category": "1","name": "Margherita", "ingredients": "Sauce tomate, fromage, olives, origan", "price": 5.50},
+    {"id": "6", "category": "1","name": "Romana", "ingredients": "Sauce tomate, fromage, jambon de dinde, champignons, origan", "price": 6.50},
+    {"id": "7", "category": "1","name": "Napoli", "ingredients": "Sauce tomate, fromage, anchois, olives, origan", "price": 6.50},
+    {"id": "8", "category": "1","name": "Thonnata", "ingredients": "Sauce tomate, fromage, thon, oignons, olives, origan", "price": 7.00},
+    {"id": "9", "category": "1","name": "Sucuk", "ingredients": "Sauce tomate, fromage, mozzarella, sucuk", "price": 7.00},
+    {"id": "10", "category": "1","name": "Funghi", "ingredients": "Sauce tomate, fromage, champignons, poivrons", "price": 7.00},
+    {"id": "11", "category": "1","name": "4 Fromages", "ingredients": "Sauce tomate, gorgonzola, chèvre, mozzarella, emmental", "price": 7.50},
+    {"id": "12", "category": "1","name": "Orientale", "ingredients": "Sauce tomate, fromage, merguez, poivrons, olives, origan", "price": 8.50},
+    {"id": "13", "category": "1","name": "Kebab", "ingredients": "Sauce tomate, fromage, viande de kebab, oignons, origan", "price": 8.00},
+    {"id": "14", "category": "1","name": "Fruits de mer", "ingredients": "Sauce tomate, fromage, fruits de mer, persillade, olives", "price": 8.00},
+    {"id": "15", "category": "1","name": "Napoléone", "ingredients": "Sauce tomate, fromage, blanc de dinde, salami, poivrons, oeuf, champignons, olives, origan", "price": 8.50},
+    {"id": "16", "category": "1","name": "Végétarienne", "ingredients": "Sauce tomate, fromage, champignons, olives, tomates fraiches, poivrons", "price": 8.50},
+    {"id": "17", "category": "1","name": "Calzone", "ingredients": "Sauce tomate, fromage, champignons, jambon de dinde, oeuf", "price": 9.00},
+    {"id": "18", "category": "1","name": "Poulet", "ingredients": "Sauce tomate, mozzarella, poulet, poivrons", "price": 9.00},
+    {"id": "19", "category": "1","name": "Parisienne", "ingredients": "Creme fraiche, mozzarella, poulet, jambon de dinde, oignons", "price": 9.00},
+    {"id": "20", "category": "1","name": "Pescatore", "ingredients": "Sauce tomate, fromage, tomate, thon, fruits de mer, anchois, oeuf", "price": 9.50},
+    {"id": "21", "category": "1","name": "Benfica", "ingredients": "Sauce tomate, mozzarella, kofte, jambon de dinde, poivrons, olives, poulet, sucuk, oeuf", "price": 10.00},
+    {"id": "22", "category": "1","name": "Pizza du chef", "ingredients": "Sauce tomate, jambon de dinde, sucuk, kebab, poivrons, olives", "price": 10.00},
+    {"id": "23", "category": "2","name": "Fromage", "ingredients": "Fromage feta, oeuf", "price": 6.50},
+    {"id": "24", "category": "2","name": "Epinards", "ingredients": "Epinards, feta, oignons, oeuf", "price": 7.00},
+    {"id": "25", "category": "2","name": "Viande hachée", "ingredients": "Viande hachée, tomate, poivrons, oignons, persil, oeuf", "price": 7.00},
+    {"id": "26", "category": "2","name": "Saucisse turque", "ingredients": "Fromage feta, saucisse turque, oeuf", "price": 7.00},
+    {"id": "27", "category": "3","name": "Vegetarien", "ingredients": "", "price": [null, 7.00]},
+    {"id": "28", "category": "3","name": "Kebab", "ingredients": "Veau / Dinde", "price": [4.50, 5.00]},
+    {"id": "29", "category": "3","name": "Kebab fromage", "ingredients": "Cheddar ou feta", "price": [5.00, 5.50]},
+    {"id": "30", "category": "3","name": "Maxi kebab", "ingredients": "", "price": [8.00, 8.50]},
+    {"id": "31", "category": "3","name": "Yufka", "ingredients": "", "price": [5.00, 5.50]},
+    {"id": "32", "category": "3","name": "Hamburger", "ingredients": "Steak haché de boeuf", "price": [4.00, 5.00]},
+    {"id": "33", "category": "3","name": "Kofte", "ingredients": "Boeuf", "price": [4.00, 5.00]},
+    {"id": "34", "category": "3","name": "Poulet", "ingredients": "", "price": [4.00, 5.00]},
+    {"id": "35", "category": "3","name": "Merguez", "ingredients": "Boeuf/Agneau", "price": [4.00, 5.00]},
+    {"id": "36", "category": "3","name": "Cheeseburger", "ingredients": "Steak haché + cheddar", "price": [4.50, 5.00]},
+    {"id": "37", "category": "3","name": "Double cheeseburger", "ingredients": "2 steak hachés + cheddar", "price": [null, 6.50]},
+    {"id": "38", "category": "3","name": "Américain", "ingredients": "", "price": [null, 5.00]},
+    {"id": "39", "category": "3","name": "Big américain", "ingredients": "Double cheese + frites", "price": [null, 6.50]},
+    {"id": "40", "category": "3","name": "Chicken", "ingredients": "Poulet, crudités, cheddar", "price": [5.00, 5.50]},
+    {"id": "41", "category": "3","name": "Lahmacun sans viande", "ingredients": "", "price": [3.50, 4.50]},
+    {"id": "42", "category": "3","name": "Lahmacun avec kebab", "ingredients": "", "price": [5.00, 6.00]},
+    {"id": "43", "category": "3","name": "Double schnitzel", "ingredients": "Escalope pannée, cheddar, crudités", "price": [null, 7.00]},
+    {"id": "44", "category": "3","name": "Le tempo", "ingredients": "Brochette d'agneau, crudités", "price": [5.50, 6.50]},
+    {"id": "45", "category": "4","name": "Le fermier", "ingredients": "Steak haché, poulet, cheddar, poivrons grillés", "price": 7.00},
+    {"id": "46", "category": "4","name": "Le Turkish", "ingredients": "Kebab, sucuk grillé", "price": 5.50},
+    {"id": "47", "category": "4","name": "Le derby", "ingredients": "Sucuk grillé, escalope de poulet, cheddar", "price": 5.50},
+    {"id": "48", "category": "5","name": "Box Kebab", "ingredients": "Frites et viande", "price": 4.00},
+    {"id": "49", "category": "5","name": "Box Blé", "ingredients": "Kebab et blé", "price": 5.00},
+    {"id": "50", "category": "5","name": "Box Poulet", "ingredients": "Frites et poulet", "price": 6.00},
+    {"id": "51", "category": "5","name": "Box Nuggets", "ingredients": "Frites et 5 nuggets", "price": 6.00},
+    {"id": "53", "category": "6","name": "Kofte", "ingredients": "Viande hachée, crudités, avec frites ou blé cassé", "price": 9.50},
+    {"id": "54", "category": "6","name": "Merguez", "ingredients": "Merguez, crudités, avec frites ou blé cassé", "price": 9.50},
+    {"id": "55", "category": "6","name": "Brochette de Poulet", "ingredients": "Brochette de poulet, crudités, avec frites ou blé cassé", "price": 10.00},
+    {"id": "56", "category": "6","name": "Escalope de poulet à la creme", "ingredients": "Escalope de poulet, creme, crudités, avec frites ou blé cassé", "price": 12.50},
+    {"id": "57", "category": "6","name": "Kebab (Veau / Dinde origine U.E.)", "ingredients": "Viande de dinde et de veau, crudités, avec frites OU blé crudités", "price": 9.50},
+    {"id": "58", "category": "6","name": "Adana", "ingredients": "Brochette de viande hachée, crudités, avec frites ou blé cassé", "price": 11.00},
+    {"id": "59", "category": "6","name": "Iskender", "ingredients": "Viande hachée, crudités, avec fites ou blé cassé", "price": 9.50},
+    {"id": "60", "category": "6","name": "Schnitzel", "ingredients": "Escalope panée, crudités, avec frites ou blé cassé", "price": 10.00},
+    {"id": "61", "category": "6","name": "Ali Nazik", "ingredients": "Brochette d'agneau avec aubergine, sauce yaourt et ail", "price": 12.00},
+    {"id": "62", "category": "6","name": "Brochette d'agneau", "ingredients": "Brochette d'agneau, crudités, avec frites ou blé cassé", "price": 12.00},
+    {"id": "63", "category": "6","name": "Côtelette d'agneau", "ingredients": "4 pièces, crudités, avec frites ou blé cassé", "price": 13.50},
+    {"id": "64", "category": "6","name": "Entrecote (Origine U.E.)", "ingredients": "Entrecote 400gr, crudités, avec frites", "price": 14.00},
+    {"id": "65", "category": "6","name": "Mixte", "ingredients": "Brochettes d'agneau, kebab, poulet, adana, crudités, avec frites ou blé cassé", "price": 15.00},
+    {"id": "66", "category": "6","name": "Assiette du chef", "ingredients": "Variétés de viandes, faites confiance au chef, réservé aux grandes faims !", "price": 23.00}
+  ],
+  "infos": {
+    "tel": {
+      "icon": "phone",
+      "value": "09 50 79 17 28"
+    },
+    "addr": {
+      "icon": "map-marker-alt",
+      "value": "32 Rue de Modenheim, 68400 Riedisheim"
+    },
+    "geojson": {
+
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page calculator</title>
+    </head>
+    <body>
+        <form id="daForm">
+            <label for="startInput" id="startInputLabel">Start page: </label>
+            <input type="number" placeholder="Start page" id="startInput"/>
+            <label for="stopInput" id="stopInputLabel">Stop page: </label>
+            <input type="number" placeholder="End page" id="stopInput"/>
+            <label for="page" id="pageInputLabel">Actual page: </label>
+            <input type="number" placeholder="Actual page" id="page">
+        </form>
+
+        <div style="margin: 2em 0;">
+            <p id="progression">
+                Progression hasn't been computed yet
+            </p>
+        </div>
+
+        <script>
+            function setup(f) {
+                Array.from(document.getElementById("daForm").elements).forEach(e => {
+                    e.addEventListener("change", (event) => {
+                        f()
+                    })
+                })
+            }
+
+            function update() {
+                let start = Number.parseInt(document.getElementById("startInput").value)
+                let stop = Number.parseInt(document.getElementById("stopInput").value)
+                let actual = Number.parseInt(document.getElementById("page").value)
+
+                if (isNaN(start) || isNaN(stop) || isNaN(actual)) {
+                    document.getElementById("progression").innerText = "Progression can't be computed yet"
+                    return
+                }
+
+                let ratio = (actual - start) / (stop - start)
+
+                console.log(ratio)
+
+                document.getElementById("progression").innerText = `Progression is: ${(ratio * 100).toFixed(2)}%`
+            }
+
+            setup(update)
+        </script>
+
+        <p>I don't care about the aesthetics of this site, I just want to compute my progression x)</p>
+    </body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurant page</title>
+</head>
+<body>
+
+    <script>
+        function dbHandler() {
+            let db = JSON.parse(this.responseText);
+
+            console.log({db});
+        }
+
+        let req = new XMLHttpRequest();
+
+        req.onload = dbHandler;
+        req.open("get", "./db.json", true);
+        req.send();
+    </script>
+</body>
+</html>
