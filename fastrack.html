@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>fastrack</title>
+    </head>
+    <style>
+        body {
+            font-size: 2em;
+            font-family: "Archivo", sans-serif;
+
+            width: 100%;
+        }
+
+        #header {
+            position: sticky;
+            top: 0;
+
+            background-color: white;
+            width: 99vw;
+
+            display: flex;
+        }
+
+        #status {
+            position: absolute;
+            top: 20px;
+            left: 20px
+        }
+
+        #title {
+            font-size: 2em;
+            font-weight: 1000;
+
+            margin-left: auto;
+            margin-right: 15px;
+
+            text-align: right;
+            padding-right: 15px;
+            padding-bottom: 10px;
+
+            border-bottom: 2px solid black;
+            width: 70vw;
+        }
+
+        #clock_container {
+            margin-top: 12vh;
+            margin-bottom: 12vh;
+
+            display: flex;
+            margin-left: auto;
+            margin-right: auto;
+
+            width: 75vw;
+            justify-content: center;
+        }
+
+        #clock_main {
+            font-size: 6em;
+            font-weight: 600;
+        }
+
+        #clock_sec {
+            font-size: 3em;
+            
+            margin-top: 35px;
+            margin-left: 5px;
+        }
+
+        input, select, button { font: inherit; }
+
+        #app_body {
+            justify-content: center;
+
+            margin-right: 2vw;
+            margin-left: 2vw;
+        }
+
+        #app_body > * {
+            margin-bottom: 40px;
+        }
+
+        #specs, #tools {
+            display: flex;
+            width: 96vw;
+        }
+
+        #specs > *, #tools > * {
+            width: 40vw;
+        }
+
+        #count {
+            width: 15vw !important;
+
+        }
+
+        #add { 
+            width: 80vw;
+        }
+
+        #data_export {
+            z-index: 300;
+            width: 96vw;
+            height: 98vh;
+            position: absolute;
+            background-color: red;
+
+            padding: 2vw;
+        }
+    </style>
+    <body>
+        <div id="header">
+            <div id="status">status</div>
+            <div id="title">fastrack</div>
+        </div>
+        <div id="data_export" hidden></div>
+        <div id="clock_container">
+            <div id="clock_main">00:00</div>
+            <div id="clock_sec">00</div>
+        </div>
+        <div id="app_body">
+            <div id="specs">
+                <select id="star">
+                </select>
+                <input type="number" id="count" value="1">
+            </div>
+            <button id="add"> Add </button>
+            <input id="override_star_config" style="background-color: pink;" hidden/> 
+            <div id="tools">
+                <button id="star_popup"> Configure stars </button>
+                <button id="export"> Export Data </button>
+            </div>
+        </div>
+        <div id="list_container">
+            <div id="list_header">
+
+            </div>
+            <div id="list_content">
+            </div>
+        </div>
+    </body>
+    <script>
+        // functional 
+        let status_div = document.getElementById("status")
+        function set_local(key, value) {
+            status_div.style.color = "red"
+            if(typeof value == "object")
+                localStorage.setItem(key, JSON.stringify(value))
+            else 
+                localStorage.setItem(key, value)
+
+            status_div.style.color = "green"
+        }
+
+        let star_field = document.getElementById("star")
+        let count_field = document.getElementById("count")
+        let stars = []
+        const APP_DEFAULT_STARS = [["star1", 1]]
+        function fetch_stars() {
+            let local = localStorage.getItem("star_config")
+            console.log({ local })
+
+            if(local == null) 
+                stars = APP_DEFAULT_STARS
+            else
+                stars = JSON.parse(local)
+
+            
+            let buf = ""
+
+            let i = 0
+            stars.forEach(star => {
+                buf += `<option value="${i}"> ${star[0]} </option>`
+                i += 1
+            })
+            console.log({ buf })
+
+            star_field.innerHTML = buf
+            star_field.value = "0"
+
+            star_field.onchange()
+        }
+
+        star_field.onchange = () => {
+            let value = star_field.value
+
+            console.log({selected_value: value})
+
+            count_field.value = stars[parseInt(value)][1].toString()
+        }
+
+        function fetch_history() {
+            function formatDate(epoch) {
+                let date = new Date(epoch)
+
+                return `${date.getFullYear()} / ${(date.getMonth()+1).toString().padStart(2, '0')} / ${date.getDate().toString().padStart(2, '0')}  # ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+            }
+
+            let t = localStorage.getItem("history")
+            if (t == null)
+                return
+
+            let history = JSON.parse(t)
+
+            let buf = ""
+            history.reverse().forEach(h => {
+                buf += `${formatDate(h.date)}  > ${h.count} ${h.star} <br>`
+            })
+
+            document.getElementById("list_content").innerHTML = buf
+        }
+
+        function add_to_record(record) {
+            console.log({adding_record: record})
+            let t = localStorage.getItem("history")
+            if (t == null)
+                t = "[]"
+
+            let history = JSON.parse(t)
+
+            history.push(record)
+
+            set_local("history", history)
+            fetch_history()
+        }
+
+        function record_star() {
+            let star_id = parseInt(star_field.value)
+            let record = {date: Date.now(), star: stars[star_id][0], count: parseInt(count_field.value)}
+
+            // update star rapid add thinggy 
+            stars[star_id][1] = parseInt(count_field.value)
+
+            add_to_record(record)
+            set_local("star_config", stars)
+        }
+
+        document.getElementById("add").onclick = record_star
+
+        function save_stars() {
+            set_local("star_config", stars)
+        }
+
+        function show_data_export(msg) {
+            let ctn = document.getElementById("data_export")
+            ctn.hidden = false
+
+            // star_config, history 
+            ctn.innerText = JSON.stringify(localStorage)
+            ctn.innerText += JSON.stringify(msg)
+        }
+
+        document.getElementById("export").onclick = () => show_data_export({msg: "export"})
+
+        function handle_star_config_override() { 
+            let popup = document.getElementById("override_star_config")
+
+            if (popup.hidden) {
+                popup.value = ""
+                popup.hidden = false 
+            } else {
+                set_local("star_config", popup.value)
+
+                popup.hidden = true 
+
+                fetch_stars()
+            }
+        }
+
+        document.getElementById("star_popup").onclick = handle_star_config_override
+
+        // clock 
+        function correct_clock(date) {
+            document.getElementById("clock_main").innerText = date.getHours().toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0')
+            document.getElementById("clock_sec").innerText = date.getSeconds().toString().padStart(2, '0')
+        }
+
+        function tick() {
+            correct_clock(new Date)
+        }
+
+        let ticker_running = true;
+        function ticker(period) {
+            tick() 
+
+            if(ticker_running)
+                setTimeout(() => ticker(period), period)
+        }
+
+        fetch_stars()
+        fetch_history()
+        ticker(50)
+
+        console.log("ola")
+    </script>
+</html>
