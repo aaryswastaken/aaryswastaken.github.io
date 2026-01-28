@@ -258,7 +258,8 @@
                 popup.value = ""
                 popup.hidden = false 
             } else {
-                set_local("star_config", popup.value)
+                let val = popup.value.replaceAll(" ", "").split(",")
+                set_local("star_config", val.map(v => [v, 1]))
 
                 popup.hidden = true 
 
