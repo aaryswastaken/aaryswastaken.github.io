@@ -85,7 +85,8 @@
         }
 
         #specs > *, #tools > * {
-            width: 40vw;
+			width: auto;
+		   flex-grow: 1;
         }
 
         #count {
@@ -106,13 +107,55 @@
 
             padding: 2vw;
         }
+
+		.hist-header {
+			display: flex;
+		}
+
+		.hist-header > .line {
+			width: 40vw;
+			margin-left: 2vw;
+			height: 1em;
+			border-bottom: solid black 1px;
+		}
+
+		.ctxbtn {
+			background-color: rgb(215, 49, 49);
+			color: white;
+
+			border: none;
+
+			margin-top: 0px;
+			margin-bottom: 20px;
+
+			margin-left: 30px;
+			margin-right: 10px;
+
+			padding-left: 15px;
+			padding-right: 15px;
+		}
+
+		.ctxbtn:disabled {
+			background-color: #CCCCDD;
+
+			margin-bottom: 0px;
+		}
+
+		#raw_data {
+			width: 90%;
+		   height: 90%;
+		   font-size: 1em;
+		}
     </style>
     <body>
         <div id="header">
             <div id="status">status</div>
             <div id="title">fastrack</div>
         </div>
-        <div id="data_export" hidden></div>
+        <div id="data_export" hidden>
+			<button onclick="override_data()"> confirm </button>
+			<textarea id="raw_data"></textarea> 
+		</div>
         <div id="clock_container">
             <div id="clock_main">00:00</div>
             <div id="clock_sec">00</div>
@@ -127,7 +170,8 @@
             <input id="override_star_config" style="background-color: pink;" hidden/> 
             <div id="tools">
                 <button id="star_popup"> Configure stars </button>
-                <button id="export"> Export Data </button>
+                <button id="export"> Mutate Data </button>
+				<button id="unlock"> Unlock </button> 
             </div>
         </div>
         <div id="list_container">
@@ -202,12 +246,90 @@
             let history = JSON.parse(t)
 
             let buf = ""
-            history.reverse().forEach(h => {
-                buf += `${formatDate(h.date)}  > ${h.count} ${h.star} <br>`
-            })
+		   let last_date = ""
+		   let totals_by_day = []
+	   	let total_today = {}
 
-            document.getElementById("list_content").innerHTML = buf
+			history.sort((rec_a, rec_b) => rec_b.date - rec_a.date)
+			// save sorted history 
+			set_local("history", history)
+
+			console.log({history})
+
+            history.forEach((h, index) => {
+				let datetime = formatDate(h.date)
+				let date = datetime.split("#")[0]
+	   
+				if (last_date != date) {
+				   if (last_date != "")
+					   totals_by_day.push({ref: last_date, total_today})
+		   		total_today = {} 
+
+					buf += `<br/> <div class="hist-header" id="hhead-date-${date}"> ${date}  </div>`
+		   		last_date = date
+				}
+
+				buf += `<div id="hctn-id-${index}"> 
+					# ${datetime.split("#")[1]}  > ${h.count} ${h.star} 
+					<button class="ctxbtn" disabled onclick="addTime(${index}, 20)"> +20 </button>
+					<button class="ctxbtn" disabled onclick="addTime(${index}, -20)"> -20 </button>
+					<button class="ctxbtn" disabled onclick="delete_record(${index})"> del </button> 
+					</div> `
+				total_today[h.star] = (total_today[h.star] ?? 0) + h.count
+        	})
+	   	totals_by_day.push({ref: last_date, total_today})
+
+			console.log({totals_by_day})
+
+        	document.getElementById("list_content").innerHTML = buf
+
+	   	totals_by_day.forEach(total => {
+				let el = document.getElementById("hhead-date-" + total.ref)
+
+				el.innerHTML = el.innerHTML + "   " + JSON.stringify(total.total_today) + "<div class=\"line\"></div>"
+		   })
         }
+
+		function addTime(index, delta) {
+            let t = localStorage.getItem("history")
+            if (t == null)
+                return
+
+            let history = JSON.parse(t)
+
+
+			console.log({history, index, delta})
+			let real_index = history.length - index - 1 
+
+			history[index].date += 1000 * 60 * delta 
+
+			set_local("history", history) 
+			fetch_history()
+		}
+
+		function delete_record(index) {
+            let t = localStorage.getItem("history")
+            if (t == null)
+                return
+
+            let history = JSON.parse(t)
+
+
+			console.log({history, index})
+			let real_index = history.length - index - 1 
+
+			history.splice(index, 1)
+
+			set_local("history", history)
+			fetch_history()
+		}
+
+
+
+		document.getElementById("unlock").onclick = () => {
+			let els = document.getElementsByClassName("ctxbtn")
+			Array.from(els).forEach(el => (el.disabled = !el.disabled))
+		}
 
         function add_to_record(record) {
             console.log({adding_record: record})
@@ -245,9 +367,24 @@
             ctn.hidden = false
 
             // star_config, history 
-            ctn.innerText = JSON.stringify(localStorage)
-            ctn.innerText += JSON.stringify(msg)
+            // ctn.innerText = JSON.stringify(localStorage)
+        	// ctn.innerText += JSON.stringify(msg)
+
+			document.getElementById("raw_data").value = JSON.stringify(localStorage)
         }
+
+		function override_data() {
+			let raw = JSON.parse(document.getElementById("raw_data").value)
+
+			Object.keys(raw).forEach(key => {
+				set_local(key, raw[key])
+			})
+
+			document.getElementById("data_export").hidden = true
+
+			fetch_stars()
+			fetch_history()
+		}
 
         document.getElementById("export").onclick = () => show_data_export({msg: "export"})
 
