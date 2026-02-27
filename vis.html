@@ -23,8 +23,8 @@
             const marginLeft = 40;
 
 
-		const min_date = history.reduce((a, c) => a["date"] < c["date"] ? a["date"] : c["date"])
-		const max_date = history.reduce((a, c) => a["date"] > c["date"] ? a["date"] : c["date"])
+		const min_date = history.reduce((a, c) => a < c["date"] ? a : c["date"])
+		const max_date = history.reduce((a, c) => a > c["date"] ? a : c["date"])
 		const dt = 1000 * 3600 * 24 * 15
 
             // Declare the x (horizontal position) scale.
