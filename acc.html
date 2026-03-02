@@ -10,6 +10,8 @@
     <script>
 	let element = document.getElementById("data");
 
+	DeviceMotionEvent.requestPermission();
+		
 	addEventListener("devicemotion", (event) => {
 		element.innerText = event.acceleration.x
 	})
