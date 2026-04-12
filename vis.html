@@ -1,121 +1,196 @@
 <!DOCTYPE html>
 <html>
-    <head> 
-	<title> vis </title>
-    </head>
-    <body>
-	<textarea id="input"> </textarea>
-	<button onclick="load()"> Load </button>
-	<div id="ctn"> </div>
-	<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-	<script>
-	   function load() {
-		let data = JSON.parse(document.getElementById("input").value)
-		let history = JSON.parse(data.history)
-
-
-	   // Declare the chart dimensions and margins.
-	   const width = 960;
-            const height = 540;
-            const marginTop = 20;
-            const marginRight = 20;
-            const marginBottom = 30;
-            const marginLeft = 40;
-
-
-		const min_date = history.reduce((a, c) => a < c["date"] ? a : c["date"])
-		const max_date = history.reduce((a, c) => a > c["date"] ? a : c["date"])
-		const dt = 1000 * 3600 * 24 * 15
-
-            // Declare the x (horizontal position) scale.
-            const x = d3.scaleUtc()
-//                .domain([new Date("2026-01-01"), new Date("2026-02-01")])
-		.domain([new Date(min_date - dt * 2), new Date(max_date + dt)])
-                .range([marginLeft, width - marginRight]);
-
-            // Declare the y (vertical position) scale.
-            const y = d3.scaleLinear()
-                .domain([24, 0])
-                .range([height - marginBottom, marginTop]);
-
-
-            // Create the SVG container.
-            const svg = d3.create("svg")
-                .attr("width", width)
-                .attr("height", height);
-
-            const grad = svg.append("linearGradient")
-              .attr("id", "Gradient1")
-              .attr("x1", 0).attr("x2", 1).attr("y1", 0).attr("y2", 1)
-
-            grad.append("stop")
-              .attr("offset", "0%")
-              .attr("stop-color", "red")
-
-            grad.append("stop")
-              .attr("offset", "100%")
-              .attr("stop-color", "red")
-  
-  
-  
-            // Add the x-axis.
-            svg.append("g")
-                .attr("transform", `translate(0,${height - marginBottom})`)
-                .call(d3.axisBottom(x));
-
-            // Add the y-axis.
-            svg.append("g")
-                .attr("transform", `translate(${marginLeft},0)`)
-                .call(d3.axisLeft(y));
-	   
-	   const yGrid = svg.append("g")
-	     .attr('stroke', '#103A4740')
-	     .attr('stroke-width', 2)
-	     .selectAll('line')
-	     .data(y.ticks())
-	     .join('line')
-	     .attr('x1', marginLeft)
-	     .attr('x2', width - marginRight)
-	     .attr('y1', d => y(d))
-	     .attr('y2', d => y(d))
-
-            const data2 = history.map(d => {
-            const split = (new Date(d["date"])).toISOString().split("T")
-   const hsplit = (split[1]).split(":")
+  <head> 
+    <title> vis </title>
+  </head>
+  <body>
+	  <textarea id="input"> </textarea>
+	  <button onclick="load()"> Load </button>
+	  <div id="ctn"> </div>
+	  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+	  <script>
+      var hist;
+      var u_hist; // used hist object to show
+      var u_types;
     
-    const hours = parseInt(hsplit[0]) + parseInt(hsplit[1]) / 60 + parseInt(hsplit[2].split(".")[0]) / 3600
+      function hash_color(name) {
+        const code = Array.from(name).map(c => c.charCodeAt(0)).join("")
+        const seed = parseInt(code)
 
-    return [split[0], hours]
-  })
+        let h = seed % 360;
 
-  const traces = svg.append("g")
-    .attr("stroke", "#44b2d499")
-    .attr("stroke-width", 6)
-    .selectAll("line")
-    .data(data2)
-    .join("line")
-      .attr("x1", d => x(new Date(d[0])))
-      .attr("x2", d => x(new Date(d[0])))
-      .attr("y1", d => y(d[1]))
-      .attr("y2", d => y(d[1] + 0.75))
-      .attr("stroke-linecap", "round")
+        return `${h}, 60%, 60%`
+      }
 
-  // #2020FFA0
-  const dot = svg.append("g")
-      .attr("fill", "none")
-      .attr("stroke", "#44b2d4ff")
-      .attr("stroke-width", 1.5)
-    .selectAll("circle")
-    .data(data2)
-    .join("circle")
-      .attr("transform", d => `translate(${x(new Date(d[0]))}, ${y(d[1])})`)
-      .attr("r", 3);
+      function postProcessLegend() {
+        let els = document.getElementsByClassName("legendEl")
 
-  console.log(dot.node());
+        console.log("legend post process called")
 
-  // Return the SVG element.
-    document.getElementById("ctn").append(svg.node())
-	   }
-	</script>
-    </body>
+        Array.from(els).forEach((el, i) => {
+          const name = el.attributes["name"].value
+          const color = hash_color(name)
+          let buf = "";
+
+          if (u_types.includes(name)) {
+            buf += `<circle fill="none" stroke="hsl(${color})" stroke-width=2 transform="translate(50, ${50+20*i})" r="3"></circle>`
+          }
+          
+          buf += `<text x="60" y="${52+20*i}"> ${name} </text>`
+  
+          el.innerHTML = buf;
+
+          el.onclick = () => {toggle_star(name)}
+        })
+      }
+
+      function toggle_star(star) {
+        if (u_types.includes(star)) {
+          u_hist = u_hist.filter(e => e.star != star)
+        } else {
+          u_hist = hist.filter(e => u_types.includes(e.star) || e.star == star)
+        }
+
+        reload_graph();
+      }
+    
+	    function load() {
+        let data = JSON.parse(document.getElementById("input").value)
+		    hist = JSON.parse(data.history)
+
+        u_hist = hist.filter(_ => true)
+        u_hist.reverse()
+
+        reload_graph()
+      }
+
+      function reload_graph() {
+        document.getElementById("ctn").innerHTML = "";
+        
+        // Declare the chart dimensions and margins.
+	      const width = 960;
+        const height = 540;
+        const marginTop = 20;
+        const marginRight = 20;
+        const marginBottom = 30;
+        const marginLeft = 40;
+
+
+		    const min_date = u_hist.reduce((a, c) => a < c["date"] ? a : c["date"])
+		    const max_date = u_hist.reduce((a, c) => a > c["date"] ? a : c["date"])
+		    const dt = 1000 * 3600 * 24 * 15
+
+        // Declare the x (horizontal position) scale.
+        const x = d3.scaleUtc()
+		      .domain([new Date(min_date - dt * 0.25), new Date(max_date + dt)])
+          .range([marginLeft, width - marginRight]);
+
+        // Declare the y (vertical position) scale.
+        const y = d3.scaleLinear()
+          .domain([24, 0])
+          .range([height - marginBottom, marginTop]);
+
+
+        // Create the SVG container.
+        const svg = d3.create("svg")
+          .attr("width", width)
+          .attr("height", height)
+        //  .attr("viewBox", [0, 0, width, height])
+
+        const view = svg.append("g")
+  
+        // Add the x-axis.
+        const x_ax = d3.axisBottom(x)
+        
+        const gX = svg.append("g")
+          .attr("transform", `translate(0,${height - marginBottom})`)
+          .call(x_ax);
+
+        // Add the y-axis.
+        const y_ax = d3.axisLeft(y)
+        
+        const gY = svg.append("g")
+          .attr("transform", `translate(${marginLeft},0)`)
+          .call(y_ax);
+	    
+	      const yGrid = view.append("g")
+	        .attr('stroke', '#103A4740')
+	        .attr('stroke-width', 2)
+	        .selectAll('line')
+	        .data(y.ticks())
+	        .join('line')
+	        .attr('x1', marginLeft)
+	        .attr('x2', width - marginRight)
+	        .attr('y1', d => y(d))
+	        .attr('y2', d => y(d))
+
+        const data2 = u_hist.map(d => {
+          const split = (new Date(d["date"])).toISOString().split("T")
+          const hsplit = (split[1]).split(":")
+    
+          const hours = parseInt(hsplit[0]) + parseInt(hsplit[1]) / 60 + parseInt(hsplit[2].split(".")[0]) / 3600
+
+          return [split[0], hours, hash_color(d["star"])]
+        })
+
+        // oops, using u_hist in what-to-show logic so we recompute the real array so that we can toggle back the one we deisabled 
+        let actual_types = [... new Set(hist.map(d => d["star"]))] 
+        u_types = [... new Set(u_hist.map(d => d["star"]))]
+
+        const legend = svg.append("g")
+          .selectAll()
+          .data(actual_types)
+          .join(
+            enter => enter.append("g")
+                      .attr("name", d => d)
+                      .attr("class", "legendEl"),
+            update => update,
+            exit => exit.remove()
+          )
+
+        setTimeout(postProcessLegend, 50)
+
+        const traces = view.append("g")
+          .attr("stroke-width", 6)
+          .selectAll("line")
+          .data(data2)
+          .join("line")
+          .attr("stroke", d => `hsla(${d[2]}, 60%)`)
+          .attr("x1", d => x(new Date(d[0])))
+          .attr("x2", d => x(new Date(d[0])))
+          .attr("y1", d => y(d[1]))
+          .attr("y2", d => y(d[1] + 0.75))
+          .attr("stroke-linecap", "round")
+
+        // #2020FFA0
+        const dot = view.append("g")
+          .attr("fill", "none")
+          .attr("stroke-width", 1.5)
+          .selectAll("circle")
+          .data(data2)
+          .join("circle")
+          .attr("stroke", d => `hsl(${d[2]})`)
+          .attr("transform", d => `translate(${x(new Date(d[0]))}, ${y(d[1])})`)
+          .attr("r", 3);
+
+        console.log(dot.node());
+
+        const zoom = d3.zoom()
+          .scaleExtent([1, 40])
+          .translateExtent([[-100, -100], [width + 90, height + 90]])
+          .filter(event => {event.preventDefault(); return (!event.ctrlKey || event.type === 'wheel') && !event.button})
+          .on("zoom", zoomed)
+
+        function zoomed({ transform }) {
+          view.attr("transform", transform)
+          gX.call(x_ax.scale(transform.rescaleX(x)))
+          gY.call(y_ax.scale(transform.rescaleY(y)))
+        }
+
+        // Return the SVG element.
+        // document.getElementById("ctn").append(svg.call(zoom).node())
+        document.getElementById("ctn").append(svg.node())
+	    }
+	  </script>
+  </body>
 </html>
